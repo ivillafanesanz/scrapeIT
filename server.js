@@ -11,7 +11,7 @@ var cheerio = require("cheerio");
 // Require all models
 var db = require("./models");
 
-var PORT = 3000;
+var PORT = 8000;
 
 // Initialize Express
 var app = express();
@@ -132,11 +132,35 @@ app.listen(PORT, function () {
   console.log("App running on port " + PORT + "!");
 });
 
-app.post("/savedarticles/:id", function (req, res) {
-  // Create a new note and pass the req.body to the entry
-  
-  db.Article.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, { new: true }).then(function (dbArticle) {
-    res.json(dbArticle);
-    console.log("article saved")
-  });
+app.get("/saved", function(req, res) {
+  db.Article.find({ isSaved: true })
+    .then(function(dbArticle) {
+      res.json(dbArticle)
+      // res.render("saved", {
+      //   articles: dbArticle
+      // });
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
 });
+
+// Save a specific Article by id
+app.put("/savedarticles/:id", function(req, res) {
+  console.log(req.params.id,"hi there")
+  db.Article.updateOne({ _id: req.params.id }, { $set: { isSaved: true } })
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+// app.post("/savedarticles/:id", function (req, res) {
+//   // Create a new note and pass the req.body to the entry
+  
+//   db.Article.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, { new: true }).then(function (dbArticle) {
+//     res.json(dbArticle);
+//     console.log("article saved")
+//   });
+// });

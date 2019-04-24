@@ -25,8 +25,9 @@ var ArticleSchema = new Schema({
     ref: "Note"
   },
 
-  saved: {
+  isSaved: {
     type: Boolean,
+    required: true,
     default: false
   }
 });
